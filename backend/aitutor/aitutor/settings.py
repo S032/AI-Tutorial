@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,13 +83,18 @@ WSGI_APPLICATION = 'aitutor.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+env = environ.Env(
+    DEBUG=(bool, True)
+)
+env_path = os.path.join(BASE_DIR, "../../.env")
+environ.Env.read_env(env_path)
+DEBUG = env('DEBUG')
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'aitutor',
-        "USER": 'aitutor',
-        "PASSWORD": 'mypassword',
+        "NAME": env('POSTGRES_DB'),
+        "USER": env('POSTGRES_USER'),
+        "PASSWORD": env('POSTGRES_PASSWORD'),
         "HOST": 'localhost',
         "PORT": '5432',
     }
