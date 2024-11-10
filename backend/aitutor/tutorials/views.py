@@ -3,8 +3,7 @@ from django.http import HttpResponse
 
 
 def home(request):
-    homePage_text = "This is home page where you can find tutorials"
-    return HttpResponse(homePage_text)
+    return render(request, 'tutorials/index.html')
 
 
 def tutorial(request, tutorial_id):
