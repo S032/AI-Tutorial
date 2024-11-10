@@ -2,7 +2,7 @@ import google.generativeai as genai
 import os
 import chardet  # type: ignore
 
-genai.configure(api_key=os.environ["API_KEY"])
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 dificult = "Легко"
 language = "C++"
 topic = "функции" 
