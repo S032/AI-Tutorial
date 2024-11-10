@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-zfg2y1ga@30_3qx59e!@+lpgw%mgd)k9^fj_$653upba6md$j3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '0.0.0.0',
+    'localhost'
+]
 
 
 # Application definition
@@ -62,10 +65,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'aitutor.urls'
 
+tutorials_template_path = os.path.join(BASE_DIR, 'tutorials/templates/')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [tutorials_template_path],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,19 +88,17 @@ WSGI_APPLICATION = 'aitutor.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-env = environ.Env(
-    DEBUG=(bool, True)
-)
-env_path = os.path.join(BASE_DIR, "../../.env")
-environ.Env.read_env(env_path)
-DEBUG = env('DEBUG')
+
+db_name = os.environ.get('POSTGRES_DB')
+db_user = os.environ.get('POSTGRES_USER')
+db_pass = os.environ.get('POSTGRES_PASSWORD')
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env('POSTGRES_DB'),
-        "USER": env('POSTGRES_USER'),
-        "PASSWORD": env('POSTGRES_PASSWORD'),
-        "HOST": 'localhost',
+        "NAME": db_name,
+        "USER": db_user,
+        "PASSWORD": db_pass,
+        "HOST": 'db',
         "PORT": '5432',
     }
 }
