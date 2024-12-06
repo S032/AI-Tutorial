@@ -29,13 +29,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
-    'localhost'
+    'localhost',
+    '127.0.0.1'
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'tutorials.apps.TutorialsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -98,7 +100,7 @@ DATABASES = {
         "NAME": db_name,
         "USER": db_user,
         "PASSWORD": db_pass,
-        "HOST": 'db',
+        "HOST": 'localhost',
         "PORT": '5432',
     }
 }
