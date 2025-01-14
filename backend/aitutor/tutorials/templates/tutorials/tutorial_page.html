@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ language.name }} Tutorials</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+        }
+        .tree-menu {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .tree-menu ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .tree-menu li {
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+        .tutorial-content {
+            padding: 30px;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: white;
+        }
+        .manual-item {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .topic-item {
+            color: #34495e;
+        }
+        .tutorial-item {
+            color: #3498db;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .tutorial-item:hover {
+            background-color: #e9ecef;
+        }
+        /* Markdown Specific Styles */
+        .tutorial-content h1, .tutorial-content h2, .tutorial-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        .tutorial-content pre {
+            background-color: #f4f4f4;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+        .tutorial-content code {
+            background-color: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 90%;
+        }
+        .tutorial-content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .tutorial-content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            color: #666;
+            font-style: italic;
+        }
+        .tutorial-content table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+        .tutorial-content table, .tutorial-content th, .tutorial-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .tutorial-content th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar with tree menu -->
+            <div class="col-md-3 sidebar">
+                <h3>{{ language.name }} Learning Path</h3>
+                <div class="tree-menu">
+                    {% for manual in manuals %}
+                    <div class="manual-item">
+                        <i class="bi bi-book"></i> {{ manual.name }}
+                        <ul>
+                            {% for topic in manual.topic_set.all %}
+                            <li class="topic-item">
+                                <i class="bi bi-folder"></i> {{ topic.name }}
+                                <ul>
+                                    {% for tutorial in topic.tutorial_set.all %}
+                                    <li class="tutorial-item" onclick="loadTutorial({{ tutorial.id }})">
+                                        <i class="bi bi-file-text"></i> {{ tutorial.name }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="col-md-9 tutorial-content">
+                <div id="tutorial-container">
+                    {% if current_tutorial %}
+                        <h2>{{ current_tutorial.name }}</h2>
+                        <div class="tutorial-date text-muted mb-3">
+                            Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
+                        </div>
+                        <div class="tutorial-markdown mt-4">
+                            {{ current_tutorial.content|safe }}
+                        </div>
+                    {% else %}
+                        <div class="text-center mt-5">
+                            <h3>Select a tutorial from the menu</h3>
+                            <p class="text-muted">Choose a tutorial from the left sidebar to start learning</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        function loadTutorial(tutorialId) {
+            fetch(`/api/tutorials/${tutorialId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('tutorial-container');
+                    container.innerHTML = `
+                        <h2>${data.name}</h2>
+                        <div class="tutorial-date text-muted mb-3">
+                            Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        </div>
+                        <div class="tutorial-markdown mt-4">
+                            ${data.content}
+                        </div>
+                    `;
+                    // Highlight code blocks
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightBlock(block);
+                    });
+                })
+                .catch(error => console.error('Error loading tutorial:', error));
+        }
+
+        // Highlight code blocks on initial page load
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
+</body>
+</html>

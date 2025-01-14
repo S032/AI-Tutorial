@@ -8,7 +8,8 @@ router.register(r'languages', views.LanguageViewSet)
 urlpatterns = [
     path("", views.home, name="homepage"),
     path("api/", include(router.urls)),
-    path("<int:tutorial_id>/", views.tutorial, name="tutorial"),
+    path("api/tutorials/<int:tutorial_id>/", views.tutorial_api, name="tutorial_api"),
+    path("<int:language_id>/", views.language, name="language"),
     path("<int:tutorial_id>/givemecodeproblem/",
          views.givemecodeproblem, name="givemecodeproblem")
 ]
