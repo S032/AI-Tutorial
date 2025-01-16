@@ -4,7 +4,8 @@ django-cors-headers
 django-environ
 django-filter
 google-cloud-aiplatform
-psycopg
+google-generativeai
+psycopg2-binary
 markdown
 markdown2
 

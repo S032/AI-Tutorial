@@ -34,6 +34,7 @@ def tutorial_api(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
     html_content = markdown2.markdown(tutorial.content, extras=['fenced-code-blocks', 'tables', 'highlight'])
     return JsonResponse({
+        'id': tutorial_id,
         'name': tutorial.name,
         'content': html_content,
         'publication_date': tutorial.publication_date.strftime('%Y-%m-%d')

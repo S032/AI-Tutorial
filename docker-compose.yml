@@ -26,9 +26,11 @@ services:
        - POSTGRES_USER=${POSTGRES_USER}
        - POSTGRES_DB=${POSTGRES_DB}
        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
     command: >
-      sh -c "sleep 5 && python aitutor/manage.py migrate &&
-             python aitutor/manage.py runserver 0.0.0.0:8000"
+      sh -c "sleep 5 && python aitutor/entrypoint.py"
     volumes:
       - ./backend/:/code
     ports:
@@ -39,4 +41,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
 

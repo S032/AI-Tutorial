@@ -112,7 +112,7 @@
                                 <i class="bi bi-folder"></i> {{ topic.name }}
                                 <ul>
                                     {% for tutorial in topic.tutorial_set.all %}
-                                    <li class="tutorial-item" onclick="loadTutorial({{ tutorial.id }})">
+                                    <li class="tutorial-item" onclick="loadTutorial({{ topic.id }}, {{ tutorial.id }})">
                                         <i class="bi bi-file-text"></i> {{ tutorial.name }}
                                     </li>
                                     {% endfor %}
@@ -127,14 +127,21 @@
             
             <!-- Main content area -->
             <div class="col-md-9 tutorial-content">
-                <div id="tutorial-container">
+                <div id="tutorial-content">
                     {% if current_tutorial %}
-                        <h2>{{ current_tutorial.name }}</h2>
-                        <div class="tutorial-date text-muted mb-3">
-                            Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
+                        <div class="tutorial-header border-bottom pb-3 mb-4">
+                            <h2 class="mb-2">{{ current_tutorial.name }}</h2>
+                            <div class="tutorial-date text-muted small">
+                                <i class="bi bi-calendar me-2"></i>Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
+                            </div>
                         </div>
                         <div class="tutorial-markdown mt-4">
                             {{ current_tutorial.content|safe }}
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'generate_code_problem' current_tutorial.id %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-code-slash"></i> Generate Practical Task
+                            </a>
                         </div>
                     {% else %}
                         <div class="text-center mt-5">
@@ -150,26 +157,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
-        function loadTutorial(tutorialId) {
+        function loadTutorial(topicId, tutorialId) {
             fetch(`/api/tutorials/${tutorialId}/`)
                 .then(response => response.json())
                 .then(data => {
-                    const container = document.getElementById('tutorial-container');
-                    container.innerHTML = `
-                        <h2>${data.name}</h2>
-                        <div class="tutorial-date text-muted mb-3">
-                            Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    const tutorialContent = `
+                        <div class="tutorial-header border-bottom pb-3 mb-4">
+                            <h2 class="mb-2">${data.name}</h2>
+                            <div class="tutorial-date text-muted small">
+                                <i class="bi bi-calendar me-2"></i>Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </div>
                         </div>
                         <div class="tutorial-markdown mt-4">
                             ${data.content}
                         </div>
+                        <div class="text-center mt-4">
+                            <a href="/${topicId}/givemecodeproblem/" class="btn btn-primary btn-lg">
+                                <i class="bi bi-code-slash"></i> Generate Practical Task
+                            </a>
+                        </div>
                     `;
+                    document.getElementById('tutorial-content').innerHTML = tutorialContent;
+                    
                     // Highlight code blocks
                     document.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightBlock(block);
                     });
                 })
-                .catch(error => console.error('Error loading tutorial:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('tutorial-content').innerHTML = 'Failed to load tutorial';
+                });
         }
 
         // Highlight code blocks on initial page load
