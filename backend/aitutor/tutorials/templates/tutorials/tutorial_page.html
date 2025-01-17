@@ -129,19 +129,22 @@
             <div class="col-md-9 tutorial-content">
                 <div id="tutorial-content">
                     {% if current_tutorial %}
-                        <div class="tutorial-header border-bottom pb-3 mb-4">
-                            <h2 class="mb-2">{{ current_tutorial.name }}</h2>
-                            <div class="tutorial-date text-muted small">
-                                <i class="bi bi-calendar me-2"></i>Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
-                            </div>
+                        <h2>{{ current_tutorial.name }}</h2>
+                        <div class="tutorial-date text-muted mb-3">
+                            Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
                         </div>
                         <div class="tutorial-markdown mt-4">
                             {{ current_tutorial.content|safe }}
                         </div>
                         <div class="text-center mt-4">
-                            <a href="{% url 'generate_code_problem' current_tutorial.id %}" class="btn btn-primary btn-lg">
+                            <a href="#" 
+                               onclick="generateCodeProblem({{ current_tutorial.topic.id }}, {{ current_tutorial.id }}); return false;" 
+                               class="btn btn-primary btn-lg">
                                 <i class="bi bi-code-slash"></i> Generate Practical Task
                             </a>
+                        </div>
+                        <div id="code-problem-container" class="mt-4">
+                            <!-- Сюда будет вставляться спиннер или сгенерированная задача -->
                         </div>
                     {% else %}
                         <div class="text-center mt-5">
@@ -162,19 +165,22 @@
                 .then(response => response.json())
                 .then(data => {
                     const tutorialContent = `
-                        <div class="tutorial-header border-bottom pb-3 mb-4">
-                            <h2 class="mb-2">${data.name}</h2>
-                            <div class="tutorial-date text-muted small">
-                                <i class="bi bi-calendar me-2"></i>Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                            </div>
+                        <h2>${data.name}</h2>
+                        <div class="tutorial-date text-muted mb-3">
+                            Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </div>
                         <div class="tutorial-markdown mt-4">
                             ${data.content}
                         </div>
                         <div class="text-center mt-4">
-                            <a href="/${topicId}/givemecodeproblem/" class="btn btn-primary btn-lg">
+                            <a href="#" 
+                               onclick="generateCodeProblem(${topicId}, ${data.id}); return false;" 
+                               class="btn btn-primary btn-lg">
                                 <i class="bi bi-code-slash"></i> Generate Practical Task
                             </a>
+                        </div>
+                        <div id="code-problem-container" class="mt-4">
+                            <!-- Сюда будет вставляться спиннер или сгенерированная задача -->
                         </div>
                     `;
                     document.getElementById('tutorial-content').innerHTML = tutorialContent;
@@ -188,6 +194,19 @@
                     console.error('Error:', error);
                     document.getElementById('tutorial-content').innerHTML = 'Failed to load tutorial';
                 });
+        }
+
+        function generateCodeProblem(topicId, tutorialId) {
+            const problemContainer = document.getElementById('code-problem-container');
+            
+            // Показываем спиннер
+            problemContainer.innerHTML = `
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
         }
 
         // Highlight code blocks on initial page load
