@@ -35,9 +35,9 @@ class Practical_task:
     def get_text(self):
         return self._module
 promt1 = Practical_task(promtsplited1[0])#1модуль
-print(promt1.get_text())
+#print(promt1.get_text())
 promt2 = Practical_task(promtsplited2[0])#2модуль
-print(promt2.get_text())
+#print(promt2.get_text())
 promt3 = Practical_task(promtsplited2[1])#3модуль
 print(promt3.get_text())
 #для вывода в консоль

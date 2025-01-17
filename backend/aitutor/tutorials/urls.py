@@ -9,6 +9,7 @@ urlpatterns = [
     path("", views.home, name="homepage"),
     path("api/", include(router.urls)),
     path("api/tutorials/<int:tutorial_id>/", views.tutorial_api, name="tutorial_api"),
+    path("api/generate_problem/<int:tutorial_id>", views.generate_code_problem_api, name="generate_problem"),
     path("<int:language_id>/", views.language, name="language"),
     path("<int:tutorial_id>/givemecodeproblem/",
          views.givemecodeproblem, name="givemecodeproblem")
