@@ -1,6 +1,5 @@
 import google.generativeai as genai
 import os
-import chardet  # type: ignore
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 dificult = "Легко"
@@ -14,9 +13,7 @@ promt = f"Можешь придумать задачу на языке {language
 tutor = f"tutorial_{language}.md"
 with open(tutor, 'rb') as f:
   raw_data = f.read()
-  result = chardet.detect(raw_data)
-  encoding = result['encoding']
-with open(tutor, "r", encoding=encoding) as f:
+with open(tutor, "r", encoding="utf-8") as f:
     tutorial_text = f.read()
 
 promt = promt + tutorial_text
