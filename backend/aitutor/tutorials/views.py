@@ -7,13 +7,13 @@ from .models import Language, Manual, Tutorial
 from .serializers import LanguageSerializer
 
 
-class LanguageViewSet(viewsets.ModelViewSet):
+class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
 
 
 def home(request):
-    return render(request, 'tutorials/indexbetter.html')
+    return render(request, 'tutorials/index.html')
 
 
 def language(request, language_id):
@@ -42,51 +42,7 @@ def tutorial_api(request, tutorial_id):
 
 def generate_code_problem_api(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
-    module1 = """
-**Задача:** Написать функцию, которая вычисляет площадь прямоугольника.
-**Код:**
 
-```cpp
-#include <iostream>
-
-using namespace std;
-
-double calculateArea(double length, double width) {
-  return length * width;
-}
-
-int main() {
-  double length, width;
-  cout << "Введите длину прямоугольника: ";
-  cin >> length;
-  cout << "Введите ширину прямоугольника: ";
-  cin >> width;
-
-  double area = calculateArea(length, width);
-  cout << "Площадь прямоугольника: " << area << endl;
-  return 0;
-}
-```
-
-**Ввод:**
-
-```
-Введите длину прямоугольника: 5
-Введите ширину прямоугольника: 10
-```
-
-**Вывод:**
-
-```
-Площадь прямоугольника: 50
-```
-"""
-    module2 = "Not exists"
-    module3 = "Not exists"
-
-    html_module_1 = markdown2.markdown(module1, extras=['fenced-code-blocks', 'tables', 'highlight'])
-    html_module_2 = markdown2.markdown(module2, extras=['fenced-code-blocks', 'tables', 'highlight'])
-    html_module_3 = markdown2.markdown(module3, extras=['fenced-code-blocks', 'tables', 'highlight'])
     import time
     time.sleep(5)
 

@@ -1,102 +1,338 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Tutorial</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Наставник - Изучайте программирование</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f4f6f9;
+        }
 
-    h1 {
-      font-size: 3em;
-      color: #333;
-      margin-bottom: 20px;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: #333;
+        }
 
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-    .dropdown-button {
-      background-color: #4CAF50;
-      /* Green */
-      color: white;
-      padding: 10px;
-      font-size: 1.2em;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      /* Rounded corners */
-    }
+        .language-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #f9f9f9;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-      border-radius: 5px;
-      /* Rounded corners */
-    }
+        .language-card {
+            display: flex;
+            flex-direction: column;
+            height: 250px; /* Фиксированная высота */
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+        }
 
-    .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
+        .language-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            height: 80px; /* Фиксированная высота заголовка */
+        }
 
-    .dropdown-content a:hover {
-      background-color: #f1f1f1
-    }
+        .language-card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+        }
 
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
+        .language-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
 
-    .dropdown:hover .dropdown-button {
-      background-color: #3e8e41;
-      /* Darker green on hover */
-    }
-  </style>
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .news-sidebar {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .news-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-date {
+            color: var(--secondary-color);
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .news-excerpt {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+
+        .support-sidebar {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .support-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .support-section:last-child {
+            border-bottom: none;
+        }
+
+        .support-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .support-details {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+
+        .support-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/logo.png" alt="AI Tutor" height="30">
+                AI Наставник
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/courses">Курсы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">О проекте</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-  <h1>AI-Tutorial</h1>
+    <div class="container-fluid mt-4">
+        <div class="main-content">
+            <div class="support-sidebar">
+                <div class="support-section">
+                    <h5 class="support-title">Поддержка проекта</h5>
+                    <p class="support-details">
+                        Помогите нам развивать платформу обучения программированию
+                    </p>
+                    <button class="btn btn-outline-primary support-button">
+                        <i class="bi bi-heart-fill"></i> Поддержать проект
+                    </button>
+                </div>
+                <div class="support-section">
+                    <h5 class="support-title">Реквизиты</h5>
+                    <div class="support-details">
+                        <p>ИНН: 000000000000</p>
+                        <p>КПП: 000000000</p>
+                        <p>ОГРН: 0000000000000</p>
+                        <p>Расчетный счет: 00000000000000000000</p>
+                        <p>БИК: 000000000</p>
+                        <p>Банк: ООО "Тестовый Банк"</p>
+                    </div>
+                </div>
+                <div class="support-section">
+                    <h5 class="support-title">Контакты</h5>
+                    <div class="support-details">
+                        <p><i class="bi bi-envelope"></i> support@aitutor.com</p>
+                        <p><i class="bi bi-telephone"></i> +7 (000) 000-00-00</p>
+                        <p><i class="bi bi-geo-alt"></i> г. Москва, ул. Тестовая, д. 0</p>
+                    </div>
+                </div>
+            </div>
 
-  <div class="dropdown">
-    <button class="dropdown-button">C++</button>
-    <div class="dropdown-content">
-      <a href="#">C++ Basics</a>
-      <a href="#">Advanced C++</a>
-      <a href="#">C++ for AI</a>
+            <div>
+                <h1 class="text-center mb-4">Выберите свой путь обучения</h1>
+                <div class="language-grid-container">
+                    <div id="language-grid" class="language-grid">
+                        <!-- Languages will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="news-sidebar">
+                <h4 class="mb-4">Последние новости</h4>
+                <div id="news-container">
+                    <div class="news-item">
+                        <div class="news-date">17 января 2024</div>
+                        <div class="news-title">Запуск платформы AI Наставник</div>
+                        <div class="news-excerpt">
+                            Мы рады представить новую платформу для изучения программирования с искусственным интеллектом!
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">15 января 2024</div>
+                        <div class="news-title">Добавлены новые языки программирования</div>
+                        <div class="news-excerpt">
+                            Расширяем курсы, добавляя уроки по Python, C++ и JavaScript.
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">10 января 2024</div>
+                        <div class="news-title">Генерация кода с помощью ИИ</div>
+                        <div class="news-excerpt">
+                            Представляем продвинутую систему помощи в генерации практических задач.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="dropdown">
-    <button class="dropdown-button">Python</button>
-    <div class="dropdown-content">
-      <a href="#">Python Fundamentals</a>
-      <a href="#">Machine Learning with Python</a>
-      <a href="#">Data Science in Python</a>
-    </div>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchLanguages() {
+            try {
+                let response = await fetch('/api/languages/');
+                let languages = await response.json();
+                let languageGrid = document.getElementById('language-grid');
+                languageGrid.innerHTML = '';
 
+                languages.forEach(language => {
+                    let card = document.createElement('div');
+                    card.className = 'language-card';
+                    
+                    // Используем цвета из color_scheme
+                    card.style.setProperty('--primary-color', language.color_scheme.primary_color);
+                    card.style.setProperty('--secondary-color', language.color_scheme.secondary_color);
+                    card.style.setProperty('--background-color', language.color_scheme.background_color);
+                    card.style.setProperty('--text-color', language.color_scheme.text_color);
+                    card.style.setProperty('--accent-color', language.color_scheme.accent_color);
 
+                    card.innerHTML = `
+                        <div class="language-card-header" style="background-color: var(--primary-color); color: white;">
+                            <h4 class="mb-0">${language.name}</h4>
+                            <i class="bi ${getLanguageIcon(language.name)} language-icon"></i>
+                        </div>
+                        <div class="language-card-body">
+                            <p class="text-muted language-description">${language.description}</p>
+                            <pre class="language-code-example"><code>${escapeHtml(language.code_example)}</code></pre>
+                            <button class="btn btn-primary" onclick="window.location.href='/${language.id}/'">
+                                Начать изучение
+                            </button>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        window.location.href = `/${language.id}/`;
+                    });
+                    
+                    languageGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки языков:', error);
+            }
+        }
 
+        function getLanguageIcon(languageName) {
+            const icons = {
+                'Python': 'bi-filetype-py',
+                'C++': 'bi-filetype-cpp',
+                'Java': 'bi-filetype-java',
+                'Kotlin': 'bi-code-slash',
+                'Ruby': 'bi-filetype-rb'
+            };
+            return icons[languageName] || 'bi-code-slash';
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        async function fetchNews() {
+            const newsContainer = document.getElementById('news-container');
+            
+            try {
+                // Здесь будет логика загрузки новостей
+            } catch (error) {
+                console.error('Ошибка загрузки новостей:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLanguages();
+            fetchNews();
+        });
+    </script>
 </body>
-
 </html>

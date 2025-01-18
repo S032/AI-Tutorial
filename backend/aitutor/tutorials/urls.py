@@ -1,6 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'languages', views.LanguageViewSet)
@@ -13,4 +15,4 @@ urlpatterns = [
     path("<int:language_id>/", views.language, name="language"),
     path("<int:tutorial_id>/givemecodeproblem/",
          views.givemecodeproblem, name="givemecodeproblem")
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
