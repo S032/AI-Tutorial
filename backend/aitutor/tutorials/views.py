@@ -15,6 +15,9 @@ class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
 def home(request):
     return render(request, 'tutorials/index.html')
 
+def in_development(request):
+    return render(request, 'tutorials/in_development.html')
+
 
 def language(request, language_id):
     language = get_object_or_404(Language, id=language_id)
