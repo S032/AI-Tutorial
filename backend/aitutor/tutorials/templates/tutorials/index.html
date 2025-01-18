@@ -1,102 +1,823 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Tutorial</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tutorial - Изучайте программирование</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a5acd;     /* Playful Slate Blue */
+            --secondary-color: #ff6b6b;   /* Vibrant Coral Red */
+            --secondary-color-light: #ffb3b3;   /* Lighter Vibrant Coral Red */
+            --background-color: #f0f4f8;  /* Soft Light Blue */
+            --text-color: #2c3e50;        /* Deep Blue-Gray */
+            --accent-color: #4ecdc4;      /* Bright Turquoise */
+        }
 
-    h1 {
-      font-size: 3em;
-      color: #333;
-      margin-bottom: 20px;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-weight: 400;
+            padding-top: 70px; /* Match navbar height */
+        }
 
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
+        .navbar {
+            background-color: var(--background-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            padding: 10px 0;
+            height: 70px; /* Explicitly set navbar height */
+            transition: all 0.3s ease;
+        }
 
-    .dropdown-button {
-      background-color: #4CAF50;
-      /* Green */
-      color: white;
-      padding: 10px;
-      font-size: 1.2em;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      /* Rounded corners */
-    }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+            font-weight: 600;
+            margin-left: 20px;
+            transition: transform 0.2s ease;
+        }
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #f9f9f9;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-      border-radius: 5px;
-      /* Rounded corners */
-    }
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
 
-    .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
+        .navbar-nav .nav-link {
+            color: var(--text-color);
+            margin: 0 10px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
 
-    .dropdown-content a:hover {
-      background-color: #f1f1f1
-    }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
 
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+        }
 
-    .dropdown:hover .dropdown-button {
-      background-color: #3e8e41;
-      /* Darker green on hover */
-    }
-  </style>
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .navbar-icons a {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-left: 15px;
+            transition: transform 0.2s ease, color 0.3s ease;
+        }
+
+        .navbar-icons a:hover {
+            color: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        .navbar-toggler {
+            border: none;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 20px;
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .language-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;  
+            height: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .language-card:hover .language-card-header {
+            background-color: color-mix(in srgb, var(--primary-color) 90%, white 10%) !important;
+        }
+
+        .language-card:hover .btn {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .language-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            height: auto;
+        }
+
+        .language-card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            gap: 15px;  
+        }
+
+        .language-description {
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .code-example-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .language-code-example {
+            background-color: white;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 6px solid var(--language-color, var(--primary-color));
+            margin-bottom: 15px;
+        }
+
+        .language-code-example pre {
+            margin: 0;
+            padding: 10px;
+        }
+
+        .language-card .btn {
+            align-self: center;
+            width: 100%;
+            margin-top: auto;  
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: flex-start;
+            gap: 30px;
+            padding: 0 40px;
+        }
+
+        .support-sidebar {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 350px;
+            flex-shrink: 0;
+        }
+
+        .news-sidebar {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 350px;
+            flex-shrink: 0;
+        }
+
+        .news-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-date {
+            color: var(--secondary-color);
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .news-excerpt {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+
+        .support-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .support-section:last-child {
+            border-bottom: none;
+        }
+
+        .support-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .support-details {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+
+        .support-button {
+            width: 100%;
+            margin-top: 10px;
+            background-color: #455a64;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .support-button:hover {
+            background-color: #3a4d56;
+        }
+
+        .btn {
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-section {
+            position: relative;
+            top: -70px;
+            margin-bottom: -70px;
+            padding-top: 70px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), #8a4fff);
+            color: white;
+            overflow: hidden;
+            margin-top: 0;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-text {
+            flex: 1;
+            padding-right: 50px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+        }
+
+        .hero-cta .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 12px 24px;
+            margin: 0 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .hero-cta .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+        }
+
+        .hero-cta .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .hero-cta .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent
+            );
+            transition: all 0.6s ease;
+        }
+
+        .hero-cta .btn:hover::before {
+            left: 100%;
+        }
+
+        .hero-cta .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .hero-cta .btn-primary:hover {
+            background-color: color-mix(in srgb, var(--secondary-color) 90%, white);
+        }
+
+        .hero-cta .btn-secondary:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .hero-cta .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ai-icon {
+            font-size: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .ai-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .scroll-indicator i {
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .site-footer {
+            background: linear-gradient(135deg, var(--primary-color), #8a4fff);
+            color: white;
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-social a {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            transform: scale(1.2);
+        }
+
+        .footer-bottom {
+            background-color: rgba(138, 79, 255, 0.2);
+            padding: 20px 0;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .newsletter-form input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .newsletter-form button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        #languages {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #languages .row {
+            justify-content: center;
+        }
+
+        .language-card-footer {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 15px;
+        }
+    </style>
 </head>
-
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-robot" style="color: var(--secondary-color); font-size: 1.5rem; vertical-align: middle;"></i>
+                <span style="color: var(--primary-color); font-weight: 700; margin-left: 10px;">AI Tutorial</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/in_development/">Курсы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/in_development/">О проекте</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-icons ms-auto me-3">
+                <a href="/in_development/" class="notification-icon">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <a href="/in_development/" class="profile-icon">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
 
-  <h1>AI-Tutorial</h1>
-
-  <div class="dropdown">
-    <button class="dropdown-button">C++</button>
-    <div class="dropdown-content">
-      <a href="#">C++ Basics</a>
-      <a href="#">Advanced C++</a>
-      <a href="#">C++ for AI</a>
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>AI Tutorial: Ваш путь в программирование</h1>
+                <p>
+                    Интерактивная платформа для изучения программирования с персонализированным подходом. 
+                    Используйте искусственный интеллект, чтобы сделать обучение увлекательным, эффективным и доступным.
+                </p>
+                <div class="hero-cta">
+                    <a href="/in_development/" class="btn btn-primary scroll-to-bottom">Начать Изучение</a>
+                    <a href="/in_development/" class="btn btn-secondary">Узнать Больше</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <i class="bi bi-robot ai-icon"></i>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="bi bi-chevron-down"></i>
+            <p>Прокрутите вниз</p>
+        </div>
     </div>
-  </div>
 
-  <div class="dropdown">
-    <button class="dropdown-button">Python</button>
-    <div class="dropdown-content">
-      <a href="#">Python Fundamentals</a>
-      <a href="#">Machine Learning with Python</a>
-      <a href="#">Data Science in Python</a>
+    <div id="languages" class="container-fluid mt-4">
+        <div class="main-content">
+            <div class="support-sidebar">
+                <div class="support-section">
+                    <h5 class="support-title">Поддержка проекта</h5>
+                    <p class="support-details">
+                        Помогите нам развивать платформу обучения программированию
+                    </p>
+                    <button class="btn btn-outline-primary support-button">
+                        <i class="bi bi-heart-fill"></i> Поддержать проект
+                    </button>
+                </div>
+                <div class="support-section">
+                    <h5 class="support-title">Реквизиты</h5>
+                    <div class="support-details">
+                        <p>ИНН: 000000000000</p>
+                        <p>КПП: 000000000</p>
+                        <p>ОГРН: 0000000000000</p>
+                        <p>Расчетный счет: 00000000000000000000</p>
+                        <p>БИК: 000000000</p>
+                        <p>Банк: ООО "Тестовый Банк"</p>
+                    </div>
+                </div>
+                <div class="support-section">
+                    <h5 class="support-title">Контакты</h5>
+                    <div class="support-details">
+                        <p><i class="bi bi-envelope"></i> support@aitutor.com</p>
+                        <p><i class="bi bi-telephone"></i> +7 (000) 000-00-00</p>
+                        <p><i class="bi bi-geo-alt"></i> г. Москва, ул. Тестовая, д. 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h1 class="text-center mb-4">Выберите свой путь обучения</h1>
+                <div class="language-grid-container">
+                    <div id="language-grid" class="language-grid">
+                        <!-- Languages will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="news-sidebar">
+                <h4 class="mb-4">Последние новости</h4>
+                <div id="news-container">
+                    <div class="news-item">
+                        <div class="news-date">17 января 2024</div>
+                        <div class="news-title">Запуск платформы AI Наставник</div>
+                        <div class="news-excerpt">
+                            Мы рады представить новую платформу для изучения программирования с искусственным интеллектом!
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">15 января 2024</div>
+                        <div class="news-title">Добавлены новые языки программирования</div>
+                        <div class="news-excerpt">
+                            Расширяем курсы, добавляя уроки по Python, C++ и JavaScript.
+                        </div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">10 января 2024</div>
+                        <div class="news-title">Генерация кода с помощью ИИ</div>
+                        <div class="news-excerpt">
+                            Представляем продвинутую систему помощи в генерации практических задач.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>О Проекте</h4>
+                <p>AI Tutorial - инновационная платформа для изучения программирования с использованием передовых технологий искусственного интеллекта.</p>
+                <div class="footer-social">
+                    <a href="/in_development/" class="bi bi-github"></a>
+                    <a href="/in_development/" class="bi bi-telegram"></a>
+                    <a href="/in_development/" class="bi bi-youtube"></a>
+                    <a href="/in_development/" class="bi bi-linkedin"></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Быстрые Ссылки</h4>
+                <ul>
+                    <li><a href="/in_development/">Языки Программирования</a></li>
+                    <li><a href="/in_development/">Курсы</a></li>
+                    <li><a href="/in_development/">Цены</a></li>
+                    <li><a href="/in_development/">Поддержка</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Подписка на Новости</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Введите ваш email" required>
+                    <button type="submit">Подписаться</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AI Tutorial. Все права защищены.</p>
+        </div>
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        async function fetchLanguages() {
+            try {
+                let response = await fetch('/api/languages/');
+                let languages = await response.json();
+                let languageGrid = document.getElementById('language-grid');
+                languageGrid.innerHTML = '';
 
+                languages.forEach(language => {
+                    let card = document.createElement('div');
+                    card.className = 'language-card';
+                    
+                    // Используем цвета из color_scheme
+                    card.style.setProperty('--primary-color', language.color_scheme.primary_color);
+                    card.style.setProperty('--secondary-color', language.color_scheme.secondary_color);
+                    card.style.setProperty('--background-color', language.color_scheme.background_color);
+                    card.style.setProperty('--text-color', language.color_scheme.text_color);
+                    card.style.setProperty('--accent-color', language.color_scheme.accent_color);
+                    card.style.setProperty('--language-color', language.color_scheme.primary_color);
+
+                    card.innerHTML = `
+                        <div class="language-card-header" style="background-color: var(--primary-color); color: white;">
+                            <h4 class="mb-0" style="color: white;">${language.name}</h4>
+                        </div>
+                        <div class="language-card-body" style="background-color: var(--background-color); color: var(--text-color);">
+                            <p class="text-muted language-description">${language.description}</p>
+                            <div class="code-example-label" style="background-color: var(--background-color); color: var(--text-color);">Пример кода на ${language.name}:</div>
+                            <pre class="language-code-example"><code class="hljs language-${language.name.toLowerCase()}">${escapeHtml(language.code_example)}</code></pre>
+                            <button class="btn btn-primary" style="background-color: var(--primary-color); color: var(--background-color);" onclick="window.location.href='/${language.id}/'"
+                                    onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='var(--background-color)'; this.style.filter='brightness(0.9)';"
+                                    onmouseout="this.style.backgroundColor='var(--primary-color)'; this.style.color='var(--background-color)'; this.style.filter='brightness(1)';">
+                                Начать изучение
+                            </button>
+                        </div>
+                    `;
+                    
+                    const codeExample = card.querySelector('.language-code-example');
+                    if (codeExample) {
+                        codeExample.style.setProperty('--language-color', language.color || getLanguageIcon(language.name));
+                    }
+                    
+                    card.addEventListener('click', () => {
+                        window.location.href = `/${language.id}/`;
+                    });
+                    
+                    languageGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки языков:', error);
+            }
+        }
+
+        function getLanguageIcon(languageName) {
+            const icons = {
+                'Python': 'bi-filetype-py',
+                'C++': 'bi-filetype-cpp',
+                'Java': 'bi-filetype-java',
+                'Kotlin': 'bi-code-slash',
+                'Ruby': 'bi-filetype-rb'
+            };
+            return icons[languageName] || 'bi-code-slash';
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        async function fetchNews() {
+            const newsContainer = document.getElementById('news-container');
+            
+            try {
+                // Здесь будет логика загрузки новостей
+            } catch (error) {
+                console.error('Ошибка загрузки новостей:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollToBottomButtons = document.querySelectorAll('.scroll-to-bottom');
+            
+            scrollToBottomButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const languagesSection = document.getElementById('languages');
+                    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                    
+                    window.scrollTo({
+                        top: languagesSection.offsetTop - navbarHeight - 20, // Added extra 40px offset
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            fetchLanguages().then(() => {
+                hljs.highlightAll(); // Ensure highlighting after languages are loaded
+            });
+            fetchNews();
+        });
+    </script>
 </body>
-
 </html>
