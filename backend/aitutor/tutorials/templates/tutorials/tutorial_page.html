@@ -6,52 +6,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ language.name }} Tutorials</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
     <style>
+        :root {
+            /* Default fallback colors in case API fetch fails */
+            --primary-color: #3776AB;
+            --secondary-color: #4B8BBE;
+            --background-color: #F0F4F8;
+            --text-color: #333333;
+            --accent-color: #FFD43B;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-top: 70px;
         }
+
         .sidebar {
             height: 100vh;
-            border-right: 1px solid #dee2e6;
+            border-right: 2px solid var(--secondary-color);
             padding: 20px;
             overflow-y: auto;
-            background-color: #f8f9fa;
+            background-color: color-mix(in srgb, var(--background-color) 90%, var(--primary-color) 10%);
         }
+
         .tree-menu {
             list-style-type: none;
             padding-left: 0;
         }
+
         .tree-menu ul {
             list-style-type: none;
             padding-left: 20px;
         }
+
         .tree-menu li {
             margin: 10px 0;
-            transition: background-color 0.3s ease;
+            transition: none;
         }
+
+        .manual-item {
+            background-color: transparent;
+            cursor: default;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .manual-item > i {
+            display: none; /* Hide toggle indicator for manual items */
+        }
+
+        .manual-item > ul {
+            max-height: none !important;
+            opacity: 1 !important;
+            overflow: visible !important;
+            padding-left: 0;
+        }
+
+        .topic-item {
+            background-color: transparent;
+            margin: 5px 0;
+            border-radius: 6px;
+            padding: 10px 15px;
+            cursor: pointer;
+            color: var(--secondary-color);
+            transition: none;
+        }
+
+        .topic-item:hover {
+            color: var(--secondary-color);
+            background-color: transparent;
+            transform: none;
+        }
+
+        .tutorial-item {
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: none;
+        }
+
+        .tutorial-item:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 20%, transparent);
+            color: var(--primary-color);
+        }
+
         .tutorial-content {
             padding: 30px;
             height: 100vh;
             overflow-y: auto;
-            background-color: white;
+            background-color: var(--background-color);
         }
-        .manual-item {
-            font-weight: bold;
-            color: #2c3e50;
+
+        /* Buttons and interactive elements */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--secondary-color);
         }
-        .topic-item {
-            color: #34495e;
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--primary-color);
         }
-        .tutorial-item {
-            color: #3498db;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
+
+        /* Code highlighting */
+        pre {
+            background-color: color-mix(in srgb, var(--background-color) 80%, var(--text-color) 20%) !important;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
         }
-        .tutorial-item:hover {
-            background-color: #e9ecef;
+
+        code {
+            color: var(--text-color);
         }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: color-mix(in srgb, var(--background-color) 90%, var(--primary-color) 10%);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
         /* Markdown Specific Styles */
         .tutorial-content h1, .tutorial-content h2, .tutorial-content h3 {
             margin-top: 1.5rem;
@@ -59,6 +152,7 @@
             font-weight: 600;
             line-height: 1.25;
         }
+
         .tutorial-content pre {
             background-color: #f4f4f4;
             border-radius: 6px;
@@ -66,37 +160,275 @@
             margin-bottom: 1rem;
             overflow-x: auto;
         }
+
         .tutorial-content code {
             background-color: #f1f1f1;
             padding: 2px 4px;
             border-radius: 4px;
             font-size: 90%;
         }
+
         .tutorial-content pre code {
             background-color: transparent;
             padding: 0;
         }
+
         .tutorial-content blockquote {
             border-left: 4px solid #3498db;
             padding-left: 15px;
             color: #666;
             font-style: italic;
         }
+
         .tutorial-content table {
             width: 100%;
             margin-bottom: 1rem;
             border-collapse: collapse;
         }
+
         .tutorial-content table, .tutorial-content th, .tutorial-content td {
             border: 1px solid #ddd;
             padding: 8px;
         }
+
         .tutorial-content th {
             background-color: #f2f2f2;
+        }
+
+        .language-navbar {
+            background-color: color-mix(in srgb, var(--background-color) 0%, var(--primary-color) 100%) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            padding: 10px 0;
+            height: 70px;
+            transition: all 0.3s ease;
+        }
+
+        .language-navbar .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .language-navbar .navbar-brand .robot-icon {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0px;
+            padding-right: 0px;
+            line-height: 1;
+        }
+
+        .language-navbar .navbar-brand {
+            color: var(--background-color);
+            font-weight: 600;
+            margin-left: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .language-navbar .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .language-navbar .navbar-nav .nav-link {
+            color: var(--background-color);
+            margin: 0 15px;
+            position: relative;
+            transition: color 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .language-navbar .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: var(--background-color);
+            transition: all 0.3s ease;
+        }
+
+        .language-navbar .navbar-nav .nav-link:hover {
+            color: var(--background-color);
+            opacity: 1;
+        }
+
+        .language-navbar .navbar-nav .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .language-navbar .navbar-icons a {
+            color: var(--background-color);
+            font-size: 1.2rem;
+            margin: 0 10px;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .language-navbar .navbar-icons a:hover {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+
+        .language-navbar .navbar-toggler {
+            border: none;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .language-navbar .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Enhanced Tree Menu Styles */
+        .sidebar {
+            background-color: color-mix(in srgb, var(--background-color) 95%, var(--primary-color) 5%);
+            border-right: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .tree-menu {
+            background-color: color-mix(in srgb, var(--background-color) 98%, var(--primary-color) 2%);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .tree-menu h3 {
+            color: var(--primary-color);
+            border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .manual-item, .topic-item {
+            background-color: color-mix(in srgb, var(--background-color) 95%, var(--primary-color) 5%);
+            margin: 5px 0;
+            border-radius: 6px;
+            padding: 10px 15px;
+            transition: none;
+        }
+
+        /* Toggle Indicator Styles */
+        .toggle-indicator {
+            position: absolute;
+            left: -20px;
+            top: 10px;
+            transform: none;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-indicator.rotated {
+            transform: rotate(90deg);
+        }
+
+        .manual-item, .topic-item {
+            position: relative;
+            padding-left: 30px;
+            transition: background-color 0.3s ease;
+            cursor: pointer; /* Shows hand cursor for items with children */
+        }
+
+        .manual-item a, 
+        .topic-item a {
+            cursor: default;
+        }
+
+        .manual-item:has(ul), 
+        .topic-item:has(ul) {
+            user-select: none; /* Prevent text selection */
+        }
+
+        .manual-item, .topic-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background-color: transparent;
+        }
+
+        .manual-item > i, 
+        .topic-item > i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .tutorial-item {
+            list-style: none;
+            padding: 6px 15px;
+            margin: 3px 0;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tutorial-item i {
+            margin-right: 8px;
+            color: color-mix(in srgb, var(--primary-color) 70%, transparent);
+            transition: color 0.3s ease;
+        }
+
+        .tutorial-item:hover i {
+            color: var(--primary-color);
+        }
+
+        /* Nested List Styles */
+        .manual-item > ul, 
+        .topic-item > ul {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            padding-left: 20px;
+        }
+
+        .manual-item.expanded > ul, 
+        .topic-item.expanded > ul {
+            max-height: 1000px;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light language-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-robot robot-icon" style="color: var(--background-color); font-size: 1.5rem; vertical-align: -0.2em;"></i>
+                <span style="color: var(--background-color); font-weight: 700; margin-left: 10px;">AI Tutorial</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Курсы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/in_development/">О проекте</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-icons ms-auto">
+                <a href="/in_development/" class="notification-icon">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <a href="/in_development/" class="profile-icon">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar with tree menu -->
@@ -105,7 +437,7 @@
                 <div class="tree-menu">
                     {% for manual in manuals %}
                     <div class="manual-item">
-                        <i class="bi bi-book"></i> {{ manual.name }}
+                        {{ manual.name }}
                         <ul>
                             {% for topic in manual.topic_set.all %}
                             <li class="topic-item">
@@ -355,10 +687,81 @@
             }
         }
 
+        // Function to fetch and set language colors
+        async function setLanguageColors() {
+            try {
+                // Get the language ID from the URL
+                const languageId = window.location.pathname.split('/').filter(Boolean).pop();
+                
+                // Fetch language details including color scheme
+                const response = await fetch(`/api/languages/${languageId}/`);
+                const languageData = await response.json();
+                
+                // Extract color scheme
+                const colorScheme = languageData.color_scheme;
+                
+                // Set CSS variables for language colors
+                document.documentElement.style.setProperty('--primary-color', colorScheme.primary_color);
+                document.documentElement.style.setProperty('--secondary-color', colorScheme.secondary_color);
+                document.documentElement.style.setProperty('--background-color', colorScheme.background_color);
+                document.documentElement.style.setProperty('--text-color', colorScheme.text_color);
+                document.documentElement.style.setProperty('--accent-color', colorScheme.accent_color);
+            } catch (error) {
+                console.error('Error fetching language colors:', error);
+            }
+        }
+
+        // Call the function when the page loads
+        document.addEventListener('DOMContentLoaded', setLanguageColors);
+
         // Highlight code blocks on initial page load
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightBlock(block);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modify toggle logic to skip manual items
+            document.querySelectorAll('.topic-item').forEach(function(item) {
+                // Only add toggle if the item has child elements
+                if (item.querySelector('ul')) {
+                    const toggleIndicator = document.createElement('i');
+                    toggleIndicator.classList.add('bi', 'bi-chevron-right', 'toggle-indicator');
+                    item.insertBefore(toggleIndicator, item.firstChild);
+
+                    // Expand first topic by default
+                    if (item.closest('.manual-item').querySelector('.topic-item') === item) {
+                        item.classList.add('expanded');
+                        toggleIndicator.classList.add('rotated');
+                    }
+
+                    // Toggle function
+                    function toggleItem() {
+                        // Toggle expanded class
+                        item.classList.toggle('expanded');
+                        
+                        // Rotate toggle indicator
+                        toggleIndicator.classList.toggle('rotated');
+                    }
+
+                    // Add click event to the entire item
+                    item.addEventListener('click', function(e) {
+                        // Prevent this if clicking on a link within the item
+                        if (e.target.closest('a')) return;
+                        
+                        // Stop propagation to prevent parent item toggles
+                        e.stopPropagation();
+                        
+                        toggleItem();
+                    });
+
+                    // Keep the existing click event on the toggle indicator
+                    toggleIndicator.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent parent click events
+                        toggleItem();
+                    });
+                }
             });
         });
     </script>
