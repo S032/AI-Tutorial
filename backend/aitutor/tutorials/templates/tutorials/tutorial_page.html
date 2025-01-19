@@ -539,6 +539,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        let currentTutorialId = null;  // Global variable to store current tutorial ID
+
         function loadTutorial(topicId, tutorialId) {
             fetch(`/api/tutorials/${tutorialId}/`)
                 .then(response => response.json())
@@ -576,6 +578,7 @@
         }
 
         function generateCodeProblem(topicId, tutorialId) {
+            currentTutorialId = tutorialId;  // Store the current tutorial ID
             const problemContainer = document.getElementById('code-problem-container');
             
             // Показываем спиннер с индикацией загрузки
@@ -646,7 +649,7 @@
                                 <div class="col-md-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Ваше решение</h6>
                                     <div class="mb-3">
-                                        <label for="outputInput" class="form-label">Введите вывод программы</label>
+                                        <label for="outputInput" class="form-label">Введите вывод программы(deprecated, will be removed in the future)</label>
                                         <textarea 
                                             id="outputInput" 
                                             class="form-control" 
@@ -699,6 +702,9 @@
         }
 
         function validateSolution() {
+            console.log('validateSolution called');
+            console.log('Current Tutorial ID:', currentTutorialId);
+
             const outputInput = document.getElementById('outputInput');
             const fileUpload = document.getElementById('codeFileUpload');
             const resultDiv = document.getElementById('validationResult');
@@ -707,25 +713,94 @@
             resultDiv.innerHTML = '';
             resultDiv.classList.remove('alert-success', 'alert-danger');
 
-            // Логика валидации
-            if (outputInput.value.trim() !== '' || fileUpload.files.length > 0) {
-                // Имитация проверки (здесь должна быть реальная логика на бэкенде)
+            // Проверяем, что tutorialId установлен
+            if (!currentTutorialId) {
+                console.error('No tutorial ID set');
+                resultDiv.classList.add('alert-danger');
                 resultDiv.innerHTML = `
-                    <div class="alert alert-info">
-                        Проверка решения... 
-                        <div class="spinner-border spinner-border-sm" role="status">
-                            <span class="visually-hidden">Загрузка...</span>
+                    <strong>Ошибка:</strong> Сначала сгенерируйте задачу.
+                `;
+                return;
+            }
+
+            // Логика валидации
+            const userSolution = outputInput.value.trim();
+            console.log('User solution:', userSolution);
+
+            if (userSolution !== '' || fileUpload.files.length > 0) {
+                // Показываем индикатор загрузки
+                resultDiv.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <span class="ms-3">Проверка решения...</span>
                     </div>
                 `;
+                resultDiv.classList.add('alert-info');
 
-                // Здесь должен быть fetch-запрос к API для проверки решения
-                setTimeout(() => {
-                    resultDiv.classList.add('alert-success');
+                console.log('Attempting to validate solution');
+                
+                // Добавляем функцию для получения CSRF токена
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                fetch(`/api/validate_solution/${currentTutorialId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        user_solution: userSolution
+                    })
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Validation result:', data.is_correct);
+                    console.log('Expected answer:', data.right_answer);
+                    
+                    // Очищаем класс индикатора загрузки
+                    resultDiv.classList.remove('alert-info');
+
+                    if (data.is_correct) {
+                        resultDiv.classList.add('alert-success');
+                        resultDiv.innerHTML = `
+                            <strong>Верно!</strong> Ваше решение корректно.
+                        `;
+                    } else {
+                        resultDiv.classList.add('alert-danger');
+                        resultDiv.innerHTML = `
+                            <strong>Неверно.</strong> Пожалуйста, проверьте ваше решение.
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Validation error:', error);
+                    
+                    // Очищаем класс индикатора загрузки
+                    resultDiv.classList.remove('alert-info');
+                    
+                    resultDiv.classList.add('alert-danger');
                     resultDiv.innerHTML = `
-                        <strong>Верно!</strong> Ваше решение соответствует ожидаемому выводу.
+                        <strong>Ошибка:</strong> Не удалось проверить решение. Попробуйте позже.
                     `;
-                }, 1500);
+                });
             } else {
                 resultDiv.classList.add('alert-danger');
                 resultDiv.innerHTML = `
@@ -733,6 +808,9 @@
                 `;
             }
         }
+
+        // Ensure validateSolution is globally accessible
+        window.validateSolution = validateSolution;
 
         // Function to fetch and set language colors
         async function setLanguageColors() {

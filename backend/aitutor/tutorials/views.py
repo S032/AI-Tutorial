@@ -6,6 +6,9 @@ from rest_framework import viewsets
 from .models import Language, Manual, Tutorial
 from .serializers import LanguageSerializer
 
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
+import json
 
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Language.objects.all()
@@ -62,7 +65,7 @@ def generate_code_problem_api(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
 
     import time
-    time.sleep(5)
+    time.sleep(2)
 
     example_task = {
         "task_description" : "Write a function that calculates the area of a rectangle.",
@@ -127,14 +130,46 @@ int main() {
 """, extras=['fenced-code-blocks', 'tables', 'highlight'])
     }
 
+    # Store the right answer in the session
+    right_answer = "50 10"
+    request.session['code_problem_right_answer'] = right_answer
+
     return JsonResponse({
         "example_task": example_task,
         "practical_task": practical_task,
         "input_validation": input_validation,
-        "right_answer": "17"
+        "right_answer": right_answer
     })
-    
 
 
 def givemecodeproblem(request, tutorial_id):
     return HttpResponse(f"problem for tutorial which id is {tutorial_id}")
+
+@csrf_protect
+@require_POST
+def validate_solution_api(request, tutorial_id):
+    import time
+    time.sleep(2)
+
+    tutorial = get_object_or_404(Tutorial, id=tutorial_id)
+    
+    # Parse the request body
+    try:
+        data = json.loads(request.body)
+        user_solution = data.get('user_solution', '').strip()
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'is_correct': False,
+            'error': 'Invalid JSON'
+        }, status=400)
+    
+    # Retrieve the right answer from the session
+    right_answer = request.session.get('code_problem_right_answer')
+    
+    # Compare solutions
+    is_correct = user_solution == right_answer
+
+    return JsonResponse({
+        'is_correct': is_correct,
+        'right_answer': right_answer
+    })

@@ -16,4 +16,5 @@ urlpatterns = [
     path("<int:tutorial_id>/givemecodeproblem/",
          views.givemecodeproblem, name="givemecodeproblem"),
     path("in_development/", views.in_development, name="in_development"),
+    path('api/validate_solution/<int:tutorial_id>/', views.validate_solution_api, name='validate_solution_api'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
