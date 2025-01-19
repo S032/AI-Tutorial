@@ -10,6 +10,7 @@ class AITutorialGenerator:
         self.topic = topic
         self.model = None
         self.tutorial_text = ""
+        self.max_attempts = 5  # Number of retry attempts
         
         # Store parsed content
         self.example_task_description = ""
@@ -57,31 +58,46 @@ class AITutorialGenerator:
 
     def generate_tutorial(self) -> Dict[str, 'PracticalTask']:
         """Generate a complete tutorial with all modules."""
-        prompt = self._create_prompt()
-        response = self.model.generate_content(prompt)
-        tutorial = self._parse_response(response.text)
+        attempt = 0
+        valid_content = False
+        result = None
         
-        # Store parsed content in instance variables
-        if tutorial and "example_task" in tutorial:
-            example_parts = self.parse_module1_content(tutorial["example_task"].get_content())
-            self.example_task_description = example_parts["task"]
-            self.example_task_code = example_parts["code"]
-            self.example_task_input = example_parts["input"]
-            self.example_task_output = example_parts["output"]
+        while attempt < self.max_attempts and not valid_content:
+            attempt += 1
+            
+            # Generate content
+            prompt = self._create_prompt()
+            response = self.model.generate_content(prompt)
+            tutorial = self._parse_response(response.text)
+            
+            # Store parsed content in instance variables
+            if tutorial and "example_task" in tutorial:
+                example_parts = self.parse_module1_content(tutorial["example_task"].get_content())
+                self.example_task_description = example_parts["task"]
+                self.example_task_code = example_parts["code"]
+                self.example_task_input = example_parts["input"]
+                self.example_task_output = example_parts["output"]
+            
+            if tutorial and "practical_task" in tutorial:
+                practical_parts = self.parse_module2_content(tutorial["practical_task"].get_content())
+                self.practical_task_description = practical_parts["task"]
+                self.practical_task_input = practical_parts["input"]
+                self.practical_task_output = practical_parts["output"]
+                
+                # Validate content is not empty
+                if self.practical_task_description and \
+                   self.practical_task_input and \
+                   self.practical_task_output:
+                    valid_content = True
+                    result = tutorial
+            
+            if tutorial and "input_output_validation" in tutorial:
+                self.input_output_validation_content = tutorial["input_output_validation"].get_content()
+                numbers = self.get_input_output_numbers(self.input_output_validation_content)
+                self.input_output_validation_input = numbers["input"]
+                self.input_output_validation_output = numbers["output"]
         
-        if tutorial and "practical_task" in tutorial:
-            practical_parts = self.parse_module2_content(tutorial["practical_task"].get_content())
-            self.practical_task_description = practical_parts["task"]
-            self.practical_task_input = practical_parts["input"]
-            self.practical_task_output = practical_parts["output"]
-        
-        if tutorial and "input_output_validation" in tutorial:
-            self.input_output_validation_content = tutorial["input_output_validation"].get_content()
-            numbers = self.get_input_output_numbers(self.input_output_validation_content)
-            self.input_output_validation_input = numbers["input"]
-            self.input_output_validation_output = numbers["output"]
-        
-        return tutorial
+        return result
 
     def _parse_response(self, response_text: str) -> Dict[str, 'PracticalTask']:
         """Parse the AI response into separate modules."""
@@ -323,80 +339,3 @@ class PracticalTask:
     def get_metadata(self, key: str) -> Any:
         """Retrieve metadata by key."""
         return self._metadata.get(key)
-
-
-def main():
-    # Example usage
-    generator = AITutorialGenerator()
-    
-    max_attempts = 5
-    attempt = 0
-    valid_content = False
-    result = None
-    
-    while attempt < max_attempts and not valid_content:
-        attempt += 1
-        
-        generator.generate_tutorial()
-
-        # Parse practical task description into three parts
-        content = generator.practical_task_description
-        
-        # First part - before input
-        task_text = ""
-        input_text = ""
-        output_text = ""
-        
-        # Try to split by input markers
-        for marker in ["**Ожидаемый ввод:**", "**Ввод:**", "**Опциональный ввод:**",
-                      "Ожидаемый ввод:", "Ввод:", "Опциональный ввод:"]:
-            if marker in content:
-                parts = content.split(marker)
-                task_text = generator._clean_text(parts[0])
-                if len(parts) > 1:
-                    rest = parts[1]
-                    # Try to split by output markers
-                    for out_marker in ["**Ожидаемый вывод:**", "**Вывод:**",
-                                     "Ожидаемый вывод:", "Вывод:"]:
-                        if out_marker in rest:
-                            io_parts = rest.split(out_marker)
-                            input_text = generator._clean_text(io_parts[0])
-                            if len(io_parts) > 1:
-                                output_text = generator._clean_text(io_parts[1])
-                            break
-                    if input_text:  # If we found input, stop looking for more markers
-                        break
-
-        # Check if all parts are non-empty
-        if task_text and input_text and output_text:
-            valid_content = True
-            result = {
-                "task": task_text,
-                "input": input_text,
-                "output": output_text,
-                "validation_input": generator.input_output_validation_input,
-                "validation_output": generator.input_output_validation_output
-            }
-            # Print example task
-            print(generator.example_task_description)
-            print("\n")
-            print(generator.example_task_code)
-            print("\n")
-            print(generator.example_task_input)
-            print("\n")
-            print(generator.example_task_output)
-            print("\n")
-            # Print practical task parts
-            print(task_text)
-            print(input_text)
-            print(output_text)
-            print("\n")
-
-            # Print input/output validation
-            print(generator.input_output_validation_input)
-            print(generator.input_output_validation_output)
-            
-    return result
-
-if __name__ == "__main__":
-    main()
