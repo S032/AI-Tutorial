@@ -19,7 +19,7 @@ def in_development(request):
     return render(request, 'tutorials/in_development.html')
 
 
-def language(request, language_id):
+def language_course(request, language_id):
     language = get_object_or_404(Language, id=language_id)
     manuals = Manual.objects.filter(language=language)
     current_tutorial = None
