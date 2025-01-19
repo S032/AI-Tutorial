@@ -56,8 +56,19 @@ class AITutorialGenerator:
             self.tutorial_text
         )
 
-    def generate_tutorial(self) -> Dict[str, 'PracticalTask']:
+    def generate_tutorial(self, tutorial_text: str = None) -> Dict[str, 'PracticalTask']:
         """Generate a complete tutorial with all modules."""
+        if tutorial_text:
+            self.tutorial_text = tutorial_text
+        else:
+            tutorial_file = f"tutorial_{self.language}.md"
+            try:
+                with open(tutorial_file, "r", encoding="utf-8") as f:
+                    self.tutorial_text = f.read()
+            except Exception as e:
+                print(f"Error loading tutorial file: {e}")
+                self.tutorial_text = ""
+
         attempt = 0
         valid_content = False
         result = None
