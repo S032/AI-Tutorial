@@ -93,13 +93,11 @@ int main() {
 ```
 """, extras=['fenced-code-blocks', 'tables', 'highlight']),
         "example_input_and_output": markdown2.markdown("""
-Ввод:
 ```
+Ввод:
 Введите длину прямоугольника: 5
 Введите ширину прямоугольника: 10
-```
 Вывод:
-```
 Площадь прямоугольника: 50
 ```
 """, extras=['fenced-code-blocks', 'tables', 'highlight'])
@@ -108,13 +106,11 @@ int main() {
     practical_task = {
         "task_description" : markdown2.markdown("Write a function that calculates the area of a rectangle.", extras=['fenced-code-blocks', 'tables', 'highlight']),
         "input_output_requirements": markdown2.markdown("""
-Ввод:
 ```
+Ввод:
 Введите длину прямоугольника: 5
 Введите ширину прямоугольника: 10
-```
 Вывод:
-```
 Площадь прямоугольника: 50
 ```
 """, extras=['fenced-code-blocks', 'tables', 'highlight'])
@@ -122,8 +118,8 @@ int main() {
 
     input_validation = {
         "input": markdown2.markdown("""
-Ввод:
 ```
+Ввод:
 Введите длину прямоугольника: 5
 Введите ширину прямоугольника: 10
 ```

@@ -165,13 +165,25 @@
 
         /* Code highlighting */
         pre {
-            background-color: color-mix(in srgb, var(--background-color) 80%, var(--text-color) 20%) !important;
+            background-color: color-mix(in srgb, var(--background-color) 90%, var(--text-color) 10%);
             border-left: 4px solid var(--primary-color);
             padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
         }
 
         code {
             color: var(--text-color);
+            font-family: 'Cascadia Code', 'Fira Code', 'Source Code Pro', Menlo, Consolas, 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
         }
 
         /* Scrollbar styling */
@@ -440,6 +452,30 @@
             max-height: 1000px;
             opacity: 1;
         }
+
+        .tutorial-header {
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--primary-color) 90%, white 10%), 
+                color-mix(in srgb, var(--primary-color) 70%, white 30%)
+            );
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .tutorial-header h2 {
+            color: white;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .tutorial-date {
+            color: color-mix(in srgb, white 80%, var(--primary-color) 20%) !important;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -508,9 +544,11 @@
             <div class="col-md-9 tutorial-content">
                 <div id="tutorial-content">
                     {% if current_tutorial %}
-                        <h2>{{ current_tutorial.name }}</h2>
-                        <div class="tutorial-date text-muted mb-3">
-                            Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
+                        <div class="tutorial-header">
+                            <h2>{{ current_tutorial.name }}</h2>
+                            <div class="tutorial-date text-muted mb-3">
+                                Published: {{ current_tutorial.publication_date|date:"F d, Y" }}
+                            </div>
                         </div>
                         <div class="tutorial-markdown mt-4">
                             {{ current_tutorial.content|safe }}
@@ -546,9 +584,11 @@
                 .then(response => response.json())
                 .then(data => {
                     const tutorialContent = `
-                        <h2>${data.name}</h2>
-                        <div class="tutorial-date text-muted mb-3">
-                            Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        <div class="tutorial-header">
+                            <h2>${data.name}</h2>
+                            <div class="tutorial-date text-muted mb-3">
+                                Published: ${new Date(data.publication_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </div>
                         </div>
                         <div class="tutorial-markdown mt-4">
                             ${data.content}
@@ -619,7 +659,7 @@
                             <pre><code class="language-python">${problemData.example_task.example_code}</code></pre>
                             
                             <h6 class="card-subtitle mt-3 mb-2 text-muted">Ожидаемый ввод/вывод</h6>
-                            <pre>${problemData.example_task.example_input_and_output}</pre>
+                            <p>${problemData.example_task.example_input_and_output}</p>
                         </div>
                     </div>
 
@@ -644,7 +684,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Ожидаемый ввод</h6>
-                                    <pre>${problemData.input_validation.input}</pre>
+                                    <p>${problemData.input_validation.input}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Ваше решение</h6>
