@@ -22,7 +22,22 @@ def in_development(request):
 def language_course(request, language_id):
     language = get_object_or_404(Language, id=language_id)
     manuals = Manual.objects.filter(language=language)
+    
+    # Select the first tutorial automatically
     current_tutorial = None
+    if manuals.exists():
+        first_manual = manuals.first()
+        first_topic = first_manual.topic_set.first()
+        if first_topic:
+            current_tutorial = first_topic.tutorial_set.first()
+            
+            # Convert tutorial content to HTML using markdown
+            if current_tutorial:
+                current_tutorial.content = markdown2.markdown(
+                    current_tutorial.content, 
+                    extras=['fenced-code-blocks', 'tables', 'highlight']
+                )
+    
     return render(request, 'tutorials/tutorial_page.html', {
         'language': language,
         'manuals': manuals,

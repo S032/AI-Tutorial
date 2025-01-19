@@ -46,6 +46,53 @@
         .tree-menu li {
             margin: 10px 0;
             transition: none;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .tree-menu .manual-item {
+            position: relative;
+        }
+
+        .tree-menu li::before,
+        .tree-menu .manual-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: color-mix(in srgb, var(--primary-color) 30%, transparent 70%);
+            border-radius: 2px;
+        }
+
+        .tree-menu .topic-item + ul::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: color-mix(in srgb, var(--secondary-color) 30%, transparent 70%);
+            border-radius: 2px;
+        }
+
+        .tree-menu ul li::before {
+            background-color: color-mix(in srgb, var(--secondary-color) 30%, transparent 70%);
+        }
+
+        .tree-menu .topic-item + ul {
+            position: relative;
+            margin-left: 10px;
+            padding-left: 5px;
+        }
+
+        .tree-menu .manual-item + ul > li::before {
+            top: -10px;  /* Extend the stripe upwards to connect with the manual item */
+        }
+
+        .tree-menu .tutorial-item::before {
+            display: none;  /* Remove stripe for individual tutorial items */
         }
 
         .manual-item {
@@ -747,12 +794,14 @@
 
                     // Add click event to the entire item
                     item.addEventListener('click', function(e) {
-                        // Prevent this if clicking on a link within the item
-                        if (e.target.closest('a')) return;
-                        
-                        // Stop propagation to prevent parent item toggles
-                        e.stopPropagation();
-                        
+                        // Prevent this if clicking on a link within the item or on a child item
+                        if (e.target.closest('a') || 
+                            e.target.closest('.tutorial-item') || 
+                            e.target.closest('.topic-item:not(:first-child)')) {
+                            return;
+                        }
+
+                        // Toggle function
                         toggleItem();
                     });
 
@@ -763,6 +812,26 @@
                     });
                 }
             });
+        });
+
+        // Automatically load the first tutorial when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the first tutorial item in the tree menu
+            const firstTutorial = document.querySelector('.tutorial-item');
+            
+            if (firstTutorial) {
+                // Extract topicId and tutorialId from the first tutorial item
+                const topicId = firstTutorial.getAttribute('data-topic-id');
+                const tutorialId = firstTutorial.getAttribute('data-tutorial-id');
+                
+                if (topicId && tutorialId) {
+                    // Trigger the loadTutorial function with the first tutorial's details
+                    loadTutorial(topicId, tutorialId);
+                    
+                    // Optionally, add active state styling to the first tutorial
+                    firstTutorial.classList.add('active');
+                }
+            }
         });
     </script>
 </body>
