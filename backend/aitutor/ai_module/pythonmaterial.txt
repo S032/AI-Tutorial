@@ -1,0 +1,63 @@
+# Структуры данных в Python
+
+## Списки
+```python
+# Создание и базовые операции
+fruits = ["яблоко", "банан", "апельсин"]
+
+# Добавление элементов
+fruits.append("груша")
+fruits.insert(1, "манго")
+
+# Удаление элементов
+fruits.remove("банан")
+last_fruit = fruits.pop()
+
+# Срезы и операции
+print(fruits[0:2])  # Первые два элемента
+print(len(fruits))  # Длина списка
+
+# Списковые включения
+squared = [x**2 for x in range(1, 6)]
+print(squared)  # [1, 4, 9, 16, 25]
+```
+
+## Словари
+```python
+# Создание словаря
+student = {
+    "name": "Иван",
+    "age": 25,
+    "courses": ["Python", "Алгоритмы"]
+}
+
+# Доступ к элементам
+print(student["name"])
+print(student.get("email", "Не указан"))
+
+# Изменение и добавление
+student["email"] = "ivan@example.com"
+student["age"] += 1
+
+# Перебор словаря
+for key, value in student.items():
+    print(f"{key}: {value}")
+```
+
+## Кортежи и Множества
+```python
+# Кортеж (неизменяемый список)
+coordinates = (10, 20)
+x, y = coordinates
+
+# Множество (уникальные элементы)
+unique_numbers = {1, 2, 3, 2, 1}
+print(unique_numbers)  # {1, 2, 3}
+
+# Операции с множествами
+set1 = {1, 2, 3}
+set2 = {3, 4, 5}
+print(set1.union(set2))
+print(set1.intersection(set2))
+```
+
