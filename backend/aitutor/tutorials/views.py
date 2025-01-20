@@ -9,6 +9,7 @@ from .serializers import LanguageSerializer
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 import json
+import ai_module.ai_tutorial_ai as AI_module
 
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Language.objects.all()
@@ -63,9 +64,6 @@ def tutorial_api(request, tutorial_id):
 
 def generate_code_problem_api(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
-
-    import time
-    time.sleep(2)
 
     example_task = {
         "task_description" : "Write a function that calculates the area of a rectangle.",
@@ -129,6 +127,10 @@ int main() {
     # Store the right answer in the session
     right_answer = "50 10"
     request.session['code_problem_right_answer'] = right_answer
+
+    # Generate the code problem
+    ai = AI_module.AITutorialGenerator()
+    ai.generate_tutorial(tutorial.name, tutorial.content)
 
     return JsonResponse({
         "example_task": example_task,
