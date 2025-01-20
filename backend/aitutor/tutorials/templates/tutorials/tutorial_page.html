@@ -914,8 +914,7 @@
                     item.addEventListener('click', function(e) {
                         // Prevent this if clicking on a link within the item or on a child item
                         if (e.target.closest('a') || 
-                            e.target.closest('.tutorial-item') || 
-                            e.target.closest('.topic-item:not(:first-child)')) {
+                            e.target.closest('.tutorial-item')) {
                             return;
                         }
 
