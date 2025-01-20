@@ -5,7 +5,7 @@ from typing import Optional, Dict, List, Any
 
 
 class AITutorialGenerator:
-    def __init__(self, language: str = "Python", difficulty: str = "Сложно", topic: str = "вещественные числа"):
+    def __init__(self, language: str = "java", difficulty: str = "Сложно", topic: str = "вещественные числа"):
         self.language = language
         self.difficulty = difficulty
         self.topic = topic
@@ -28,7 +28,7 @@ class AITutorialGenerator:
         
         self._setup_gemini()
         self._load_tutorial()
-        self.max_attempts = 5  # Number of retry attempts
+        self.max_attempts = 10  # Number of retry attempts
 
     def _setup_gemini(self) -> None:
         """Initialize the Gemini API and model."""
@@ -36,7 +36,7 @@ class AITutorialGenerator:
         self.model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     def _load_tutorial(self) -> None:
         """Load tutorial content from the corresponding markdown file."""
-        tutorial_file = f"pythonmaterial.txt"
+        tutorial_file = f"tutorial_java.md"
         try:
             with open(tutorial_file, "r", encoding="utf-8") as f:
                 self.tutorial_text = f.read()
