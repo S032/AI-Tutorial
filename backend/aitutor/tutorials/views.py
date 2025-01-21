@@ -65,80 +65,15 @@ def tutorial_api(request, tutorial_id):
 def generate_code_problem_api(request, tutorial_id):
     tutorial = get_object_or_404(Tutorial, id=tutorial_id)
 
-    example_task = {
-        "task_description" : "Write a function that calculates the area of a rectangle.",
-        "example_code": markdown2.markdown("""
-```cpp
-#include <iostream>
-
-using namespace std;
-
-double calculateArea(double length, double width) {
-  return length * width;
-}
-
-int main() {
-  double length, width;
-  cout << "Введите длину прямоугольника: ";
-  cin >> length;
-  cout << "Введите ширину прямоугольника: ";
-  cin >> width;
-
-  double area = calculateArea(length, width);
-  cout << "Площадь прямоугольника: " << area << endl;
-  return 0;
-}
-```
-""", extras=['fenced-code-blocks', 'tables', 'highlight']),
-        "example_input_and_output": markdown2.markdown("""
-```
-Ввод:
-Введите длину прямоугольника: 5
-Введите ширину прямоугольника: 10
-Вывод:
-Площадь прямоугольника: 50
-```
-""", extras=['fenced-code-blocks', 'tables', 'highlight'])
-    }
-
-    practical_task = {
-        "task_description" : markdown2.markdown("Write a function that calculates the area of a rectangle.", extras=['fenced-code-blocks', 'tables', 'highlight']),
-        "input_output_requirements": markdown2.markdown("""
-```
-Ввод:
-Введите длину прямоугольника: 5
-Введите ширину прямоугольника: 10
-Вывод:
-Площадь прямоугольника: 50
-```
-""", extras=['fenced-code-blocks', 'tables', 'highlight'])
-    }
-
-    input_validation = {
-        "input": markdown2.markdown("""
-```
-Ввод:
-Введите длину прямоугольника: 5
-Введите ширину прямоугольника: 10
-```
-""", extras=['fenced-code-blocks', 'tables', 'highlight'])
-    }
-
-    # Store the right answer in the session
-    right_answer = "50 10"
-    request.session['code_problem_right_answer'] = right_answer
-
     # Generate the code problem
     ai = AI_module.AITutorialGenerator()
-    ai.generate_tutorial(tutorial.name, tutorial.content)
+    generated_problem = ai.generate_tutorial(tutorial.name, tutorial.content)
 
-    return JsonResponse({
-        "example_task": example_task,
-        "practical_task": practical_task,
-        "input_validation": input_validation,
-        "right_answer": right_answer
-    })
+    request.session['code_problem_right_answer'] = generated_problem['practical_task_answer']['output']
 
+    generated_problem['example_task']['code'] = markdown2.markdown(generated_problem['example_task']['code'], extras=['fenced-code-blocks', 'tables', 'highlight'])
+
+    return JsonResponse(generated_problem)
 
 def givemecodeproblem(request, tutorial_id):
     return HttpResponse(f"problem for tutorial which id is {tutorial_id}")

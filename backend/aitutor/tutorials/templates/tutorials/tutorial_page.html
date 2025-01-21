@@ -145,6 +145,12 @@
             color: var(--primary-color);
         }
 
+        .tutorial-item.selected {
+            background-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         .tutorial-content {
             padding: 30px;
             height: 100vh;
@@ -527,7 +533,9 @@
                                 <i class="bi bi-folder"></i> {{ topic.name }}
                                 <ul>
                                     {% for tutorial in topic.tutorial_set.all %}
-                                    <li class="tutorial-item" onclick="loadTutorial({{ topic.id }}, {{ tutorial.id }})">
+                                    <li class="tutorial-item" 
+                                        data-tutorial-id="{{ tutorial.id }}"
+                                        onclick="loadTutorial({{ topic.id }}, {{ tutorial.id }})">
                                         <i class="bi bi-file-text"></i> {{ tutorial.name }}
                                     </li>
                                     {% endfor %}
@@ -610,6 +618,17 @@
                     document.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightBlock(block);
                     });
+
+                    // Remove selected class from all tutorial items
+                    document.querySelectorAll('.tutorial-item').forEach((item) => {
+                        item.classList.remove('selected');
+                    });
+
+                    // Add selected class to the current tutorial item
+                    const currentTutorialItem = document.querySelector(`.tutorial-item[data-tutorial-id="${tutorialId}"]`);
+                    if (currentTutorialItem) {
+                        currentTutorialItem.classList.add('selected');
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -653,13 +672,14 @@
                         </div>
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-muted">Описание задачи</h6>
-                            <p>${problemData.example_task.task_description}</p>
+                            <p>${problemData.example_task.task_text}</p>
                             
                             <h6 class="card-subtitle mt-3 mb-2 text-muted">Пример кода</h6>
-                            <pre><code class="language-python">${problemData.example_task.example_code}</code></pre>
+                            <pre><code class="language-python">${problemData.example_task.code}</code></pre>
                             
                             <h6 class="card-subtitle mt-3 mb-2 text-muted">Ожидаемый ввод/вывод</h6>
-                            <p>${problemData.example_task.example_input_and_output}</p>
+                            <pre>${problemData.example_task.input}</pre>
+                            <pre>${problemData.example_task.output}</pre>
                         </div>
                     </div>
 
@@ -669,10 +689,11 @@
                         </div>
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-muted">Описание задачи</h6>
-                            <p>${problemData.practical_task.task_description}</p>
+                            <p>${problemData.practical_task.task_text}</p>
                             
                             <h6 class="card-subtitle mt-3 mb-2 text-muted">Требования к вводу/выводу</h6>
-                            <p>${problemData.practical_task.input_output_requirements}</p>
+                            <pre>Ввод: ${problemData.practical_task.input_requirements}</pre>
+                            <pre>Вывод: ${problemData.practical_task.output_requirements}</pre>
                         </div>
                     </div>
 
@@ -684,7 +705,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Ожидаемый ввод</h6>
-                                    <p>${problemData.input_validation.input}</p>
+                                    <pre>${problemData.practical_task_answer.input}</pre>
                                 </div>
                                 <div class="col-md-6">
                                     <h6 class="card-subtitle mb-2 text-muted">Ваше решение</h6>
@@ -931,23 +952,19 @@
             });
         });
 
-        // Automatically load the first tutorial when the page loads
+        // Load the first tutorial by default when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Find the first tutorial item in the tree menu
-            const firstTutorial = document.querySelector('.tutorial-item');
-            
-            if (firstTutorial) {
-                // Extract topicId and tutorialId from the first tutorial item
-                const topicId = firstTutorial.getAttribute('data-topic-id');
-                const tutorialId = firstTutorial.getAttribute('data-tutorial-id');
+            const firstTutorialItem = document.querySelector('.tutorial-item');
+            if (firstTutorialItem) {
+                const topicId = firstTutorialItem.closest('.topic-item').getAttribute('data-topic-id');
+                const tutorialId = firstTutorialItem.getAttribute('data-tutorial-id');
                 
-                if (topicId && tutorialId) {
-                    // Trigger the loadTutorial function with the first tutorial's details
-                    loadTutorial(topicId, tutorialId);
-                    
-                    // Optionally, add active state styling to the first tutorial
-                    firstTutorial.classList.add('active');
-                }
+                // Manually add the 'selected' class to the first tutorial item
+                firstTutorialItem.classList.add('selected');
+                
+                // Load the first tutorial
+                loadTutorial(topicId, tutorialId);
             }
         });
     </script>
