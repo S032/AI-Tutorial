@@ -2,6 +2,7 @@ Django>=3.2,<4.0
 djangorestframework
 django-cors-headers
 django-environ
+django-extensions
 django-filter
 google-cloud-aiplatform
 google-generativeai

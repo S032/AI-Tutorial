@@ -2,6 +2,7 @@
 import os
 import sys
 import django
+import runpy
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
 
@@ -35,6 +36,7 @@ def create_superuser_():
     except django.db.utils.IntegrityError:
         # Если пользователь уже существует
         print(f"ℹ️ Superuser {username} already exists")
+
 
 
 def main():

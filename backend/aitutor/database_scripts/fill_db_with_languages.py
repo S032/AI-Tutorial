@@ -1,19 +1,9 @@
 import os
-import sys
 import json
-import django
 from django.db import transaction
-
-# Add project path
-sys.path.append('/home/nadgox/Public/PublicProjects/Python/AI-Tutorial/backend/aitutor')
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'aitutor.settings')
-
-# Initialize Django
-django.setup()
-
 from tutorials.models import Language, ColorScheme
 
-def fill_languages_and_color_schemes():
+def run():
     # Load languages from JSON file
     json_path = os.path.join(
         '/home/nadgox/Public/PublicProjects/Python/AI-Tutorial/backend/aitutor/database_scripts', 
@@ -50,8 +40,3 @@ def fill_languages_and_color_schemes():
             
             print(f"Added language: {language.name}")
 
-def main():
-    fill_languages_and_color_schemes()
-
-if __name__ == '__main__':
-    main()

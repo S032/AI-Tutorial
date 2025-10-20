@@ -7,7 +7,7 @@ from .models import Language, Manual, Tutorial
 from .serializers import LanguageSerializer
 
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 import json
 import ai_module.ai_tutorial_ai as AI_module
 
@@ -78,7 +78,7 @@ def generate_code_problem_api(request, tutorial_id):
 def givemecodeproblem(request, tutorial_id):
     return HttpResponse(f"problem for tutorial which id is {tutorial_id}")
 
-@csrf_protect
+@csrf_exempt
 @require_POST
 def validate_solution_api(request, tutorial_id):
     import time
